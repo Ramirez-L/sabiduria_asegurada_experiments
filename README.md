@@ -1,70 +1,142 @@
-# Hunty Datasets EDA
-> Early exploration on data and implementation of OpenAI ada-02
+# 🤖 Policy Guru Chatbot 🏦
 
-## Directory
+The Policy Insurance Chatbot is your virtual insurance assistant designed to make your insurance journey smooth and hassle-free! 😊
 
+## Features ✨
+
+- **24/7 Availability**: Our chatbot is always ready to assist you, day or night, weekdays or weekends. 🕰️
+
+- **Policy Information**: Access your policy details, coverage information, and renewal dates with just a few clicks. 🔍📋
+
+## How to Install 📝
+
+Complete stand-alone application
 ```
-.
-├── .env
-├── EDA.ipynb
-├── README.md
-├── dataset
-│   ├── .gitkeep
-│   ├── postings.csv
-│   └── users.csv
-├── model
-│   ├── .gitkeep
-│   ├── embeddings
-│   │   ├── job<id>.npy
-│   │   └── id_user<id>.npy
-│   └── model.py
-├── requirements.txt
-├── src
-│   ├── __init__.py
+docker compose up --build
+```
+## **System's Diagram** 
+
+You can also take a look at the file `images/System_architecture_diagram.drawio.png` to have a graphical description of the microservices and how the communication is performed.
+
+![System Diagram](images/System_architecture_diagram.drawio.png)
+
+## **Workflow**
+
+Code workflow 
+
+![Workflow](images/workflow.png)
+
+## Folders architecture
+
+```ut8
+├── app
+│   ├── agent_utils.py
+│   ├── app.py
+│   ├── chainlit.md
 │   ├── config.py
+│   ├── data_preloader
+│   │   └── dataset
+│   │       ├── raw_chunks
+│   │       └── raw_pdfs
 │   ├── data_utils.py
-│   ├── plots.py
-│   └── preprocessing.py
-└── tests
-    ├── __init__.py
-    ├── conftest.py
-    ├── test_data_utils.py
-    └── test_preprocessing.py
+│   ├── Dockerfile
+│   ├── __init__.py
+│   ├── requirements.txt
+│   └── text_templates.py
+├── data_preloader
+│   ├── config.py
+│   ├── dataset
+│   │   ├── raw_chunks
+│   │   └── raw_pdfs
+│   ├── data_utils.py
+│   ├── Dockerfile
+│   ├── document_utils.py
+│   ├── health_check.py
+│   ├── __init__.py
+│   ├── main.py
+│   ├── requirements.txt
+│   └── text_preprocessing.py
+├── dataset
+│   ├── raw_chunks
+│   └── raw_pdfs
+├── docker-compose.yml
+├── EDA.ipynb
+├── env_template
+├── images
+├── LICENSE
+├── qdrant_db
+│   └── qdrant_storage
+├── README.md
+├── tests
+    └── __init__.py
 
-7 directories, 10033 files
-```
-## The Business problem
-
-To vevelop a job recommendation system based on the similarity between the
-characteristics of vacancies and user profiles.
-
-## Technical aspects
-
-This notebook will guide you through all the steps made to explore data, evaluate model implementation and test/define key functions for further deployment.
-
-The technologies involved are:
-- Python as the main programming language
-- Pandas for consuming data from CSVs files
-- **Numpy to store binary representations of vectors**
-- OpenAI Ada 02, nltk for building features and training ML models
-- Matplotlib and Seaborn for the visualizations
-- Jupyter notebooks to make the experimentation in an interactive way
-
-## Installation
-
-A `requirements.txt` file is provided with all the needed Python libraries for running this project. For installing the dependencies just run:
-
-```console
-$ pip install -r requirements.txt
 ```
 
-*Note:* We encourage you to install those inside a virtual environment.
+
+## Modules Documentation :gift:
+Let's take a quick overview of each module:
+
+### **app** :computer:
+
+It has all the needed code to implement the front and backend of the chatbot. It uses Chainlit framework for LLMs.
+
+- `app/agent_utils.py`: Includes the required function for the creation of a custom Agent Class and ChatBOT Class.
+- `app/app.py`: Includes Chainlit front-end code
+- `app/chainlit.md`: Markdown file for Chainlit README
+- `app/config.py`: env variables for api configuration .
+- `app/data_utils.py`: Includes Database connection and embbedgins loading.
+- `app/text_templates.py`: Includes all the custom Prompt Templates.
+- `feedback/feedback.txt`: Txt file to store reviews about answers.
+- `chainlit.md`: Markdown file for Chainlit `README`
+### **data_preloader** :floppy_disk:
+
+Microservice forQdrant database initialization. 
+
+-   `dataset/`: Predefined folder to store dowloaded and processed PDFs. This folder is shared with APP microservice in the `docker-compose.yml`: file to allow the user to download the PDFs.
+-   `config.py`: env variables for api configuration .
+- `data_utils.py` Functions to download the Data from S3.
+- `document_utils.py` Preprocessing/Cleaning and Qdrant loading functions.
+- `health_check.py` ENTRYPOINT for healtcheck microservice. Checks if Qdrant is ready to receive querys to avoid building errors.
+- `main.py` ENTRYPOINT for preloader microservice. Downloads, procceses and saves the data in Qdrant.
+- `text_preprocessing.py` Text normalization and preprocessing functions.
+
+### **dataset** :newspaper:
+
+Folder for data storage
+
+- `raw_chunks`: Folder with the processed policies divived by policy number
+- `raw_pdfs` Raw PDFS downloaded from S3
+
+### **images** :sunny:
+
+Key images for readme
+
+### **qdrant_db** :mag_right:
+
+Shared volume with Qdrant docker container. Saves all the embbegins information. Check the [documentation](https://qdrant.tech/).
+
+### **stress_test** :fire:
+
+Not related to the microservice architecture. Folder used to contain the locust fyle to test hardware performance.
+
+- `locustfile.py` Contains `locust`` tests.
+
+
+## Feedback 📢
+
+We value your feedback and suggestions! If you have any ideas for improvement or encounter any issues, please let us know. 🙌📧
+
+## Disclaimer 📜
+
+The Policy Insurance Chatbot is designed to provide general insurance information and quotes. For specific policy details and personalized advice, we recommend consulting with our professional insurance agents. 👨‍💼🔍
+
+Let's get started and simplify your insurance journey! 🚀💼
+
 
 ## Code Style
 
-Following a style guide keeps the code's aesthetics clean and improves readability, making contributions and code reviews easier. Automated Python code formatters make sure your codebase stays in a consistent style without any manual work on your end. If adhering to a specific style of coding is important to you, employing an automated to do that job is the obvious thing to do. This avoids bike-shedding on nitpicks during code reviews, saving you an enormous amount of time overall.
 
-[Black](https://black.readthedocs.io/) and [isort](https://pycqa.github.io/isort/) for automated code formatting in this project, you can run it with:
+We use [Black](https://black.readthedocs.io/) and [isort](https://pycqa.github.io/isort/) for automated code formatting in this project, you can run it with:
 
 ```console
 $ isort --profile=black . && black --line-length 88 .
